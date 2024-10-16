@@ -12,12 +12,15 @@
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
     "axios": "^1.5.0",
+    "blocksin-system": "^1.5.8",
     "d3": "^7.9.0",
+    "fabric": "^6.4.3",
     "mobx": "^6.10.2",
     "mobx-react": "^9.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sass": "^1.66.1"
+    "sass": "^1.79.5",
+    "sebikostudio-icons": "^1.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

@@ -1,0 +1,28 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 400px;
+}
+
+.canvasWrap {
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  gap: 20px;
+
+  canvas {
+    border-radius: 4px;
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  height: 100%;
+  gap: 12px;
+  padding: 12px 6px;
+}

@@ -1,5 +1,5 @@
 import './Editor.css';
-import {useEffect, useRef, useState, MouseEvent} from "react";
+import {MouseEvent, useEffect, useRef, useState} from "react";
 import * as d3 from 'd3';
 
 interface Circle {
@@ -35,11 +35,11 @@ export const Editor = () => {
     const [selectedCircles, setSelectedCircles] = useState<number[]>([]);
     const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null);
     const [isSelecting, setIsSelecting] = useState<boolean>(false);
-    const [startPoint, setStartPoint] = useState<Point>({ x: 0, y: 0 });
+    const [startPoint, setStartPoint] = useState<Point>({x: 0, y: 0});
 
 
-    const addCircle = (event)=>{
-        const { clientX, clientY } = event;
+    const addCircle = (event) => {
+        const {clientX, clientY} = event;
         const svg = svgRef.current;
         const point = svg?.createSVGPoint();
         point.x = clientX;
@@ -66,10 +66,10 @@ export const Editor = () => {
     };
 
     const handleSvgClick = (event) => {
-        if(currentTub === EditMenuType.choose){
+        if (currentTub === EditMenuType.choose) {
             setSelectedCircle(null);
         }
-        if(currentTub === EditMenuType.circle){
+        if (currentTub === EditMenuType.circle) {
             addCircle(event)
         }
     };
@@ -77,7 +77,7 @@ export const Editor = () => {
 
     const handleSvgMouseDown = (event: MouseEvent<SVGSVGElement>) => {
         if (currentTub === EditMenuType.choose) {
-            const { clientX, clientY } = event;
+            const {clientX, clientY} = event;
             const svg = svgRef.current;
             if (!svg) return;
 
@@ -94,7 +94,7 @@ export const Editor = () => {
 
     const handleSvgMouseMove = (event: MouseEvent<SVGSVGElement>) => {
         if (isSelecting) {
-            const { clientX, clientY } = event;
+            const {clientX, clientY} = event;
             const svg = svgRef.current;
             if (!svg) return;
 
@@ -108,7 +108,7 @@ export const Editor = () => {
             const width = Math.abs(startPoint.x - svgPoint.x);
             const height = Math.abs(startPoint.y - svgPoint.y);
 
-            setSelectionRect({ x, y, width, height });
+            setSelectionRect({x, y, width, height});
 
             const selected = circles.filter(circle =>
                 circle.cx >= x &&
@@ -157,18 +157,18 @@ export const Editor = () => {
                     .on('click', (event, d) => chooseCircle(event, d))
                     .call(
                         d3.drag().on('drag', function (event, d) {
-                                d3.select(this)
-                                    .attr('cx', event.x)
-                                    .attr('cy', event.y);
-                                setCircles(prevCircles =>
-                                    prevCircles.map(circle =>
-                                        circle.id === d.id
-                                            ? { ...circle, cx: event.x, cy: event.y }
-                                            : circle
-                                    )
-                                );
-                            })
-                        ),
+                            d3.select(this)
+                                .attr('cx', event.x)
+                                .attr('cy', event.y);
+                            setCircles(prevCircles =>
+                                prevCircles.map(circle =>
+                                    circle.id === d.id
+                                        ? {...circle, cx: event.x, cy: event.y}
+                                        : circle
+                                )
+                            );
+                        })
+                    ),
                 update => update
                     .attr('cx', d => d.cx)
                     .attr('cy', d => d.cy)
@@ -195,7 +195,7 @@ export const Editor = () => {
                 // .on('click', (event, d) => event.stopPropagation())
                 .call(
                     d3.drag()
-                        .on('start', function(event) {
+                        .on('start', function (event) {
                             const initialX = parseFloat(d3.select(this).attr('x'));
                             const initialY = parseFloat(d3.select(this).attr('y'));
 
@@ -204,13 +204,13 @@ export const Editor = () => {
 
                             this._initialCircles = selectedCircles.map(circleId => {
                                 const circle = circles.find(c => c.id === circleId);
-                                return { id: circle.id, cx: circle.cx, cy: circle.cy };
+                                return {id: circle.id, cx: circle.cx, cy: circle.cy};
                             });
 
                             this._offsetX = event.x - initialX;
                             this._offsetY = event.y - initialY;
                         })
-                        .on('drag', function(event) {
+                        .on('drag', function (event) {
                             const newX = event.x - this._offsetX;
                             const newY = event.y - this._offsetY;
 
@@ -224,7 +224,11 @@ export const Editor = () => {
                                     if (isInclude) {
                                         const deltaX = newX - this._initialX;
                                         const deltaY = newY - this._initialY;
-                                        return { ...circle, cx: this._initialCircles.find(c => c.id === circle.id).cx + deltaX, cy: this._initialCircles.find(c => c.id === circle.id).cy + deltaY };
+                                        return {
+                                            ...circle,
+                                            cx: this._initialCircles.find(c => c.id === circle.id).cx + deltaX,
+                                            cy: this._initialCircles.find(c => c.id === circle.id).cy + deltaY
+                                        };
                                     }
                                     return circle;
                                 })
@@ -255,31 +259,42 @@ export const Editor = () => {
     }, [circles, selectedCircle, selectionRect]);
 
     return (
-        <div className='wrapper'>
-            <svg
-                ref={svgRef}
-                style={{width: '500px', height: '500px', border: '1px solid black', borderRadius: '8px', backgroundColor: '#fff'}}
-                onClick={handleSvgClick}
-                onMouseDown={handleSvgMouseDown}
-                onMouseMove={handleSvgMouseMove}
-                onMouseUp={handleSvgMouseUp}
-            >
-            </svg>
-            <EditMenu currentTub={currentTub} setCurrentTub={setCurrentTub} />
+        <div className='page'>
+            <div>d3 editor</div>
+            <div className='wrapper'>
+                <svg
+                    ref={svgRef}
+                    style={{
+                        width: '500px',
+                        height: '500px',
+                        border: '1px solid black',
+                        borderRadius: '8px',
+                        backgroundColor: '#fff'
+                    }}
+                    onClick={handleSvgClick}
+                    onMouseDown={handleSvgMouseDown}
+                    onMouseMove={handleSvgMouseMove}
+                    onMouseUp={handleSvgMouseUp}
+                >
+                </svg>
+                <EditMenu currentTub={currentTub} setCurrentTub={setCurrentTub}/>
+            </div>
         </div>
+
     );
 }
 
 const editMenuData = [EditMenuType.choose, EditMenuType.circle]
 
-interface EditMenuProps{
+interface EditMenuProps {
     currentTub: EditMenuType
-    setCurrentTub: (value:EditMenuType)=> void
+    setCurrentTub: (value: EditMenuType) => void
 }
 
-const EditMenu = ({currentTub, setCurrentTub}:EditMenuProps)=>{
-    const setCurrentTubHandler = (value: EditMenuType)=>()=>setCurrentTub(value)
+const EditMenu = ({currentTub, setCurrentTub}: EditMenuProps) => {
+    const setCurrentTubHandler = (value: EditMenuType) => () => setCurrentTub(value)
     return <div className='menu-wrap'>
-        {editMenuData.map(editMenu => <div key={editMenu} onClick={setCurrentTubHandler(editMenu)} className={currentTub === editMenu ? 'active item' : 'item'}>{editMenu}</div>)}
+        {editMenuData.map(editMenu => <div key={editMenu} onClick={setCurrentTubHandler(editMenu)}
+                                           className={currentTub === editMenu ? 'active item' : 'item'}>{editMenu}</div>)}
     </div>
 }

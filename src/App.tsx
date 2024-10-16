@@ -11,14 +11,12 @@ function App() {
         <div>
             <div>main</div>
             <FabricJsEditor/>
-            <Editor/>
-            {/*<Suspense fallback='Loader'>*/}
             <AppCheckbox text={'check'}
                          value={value}
                          onChange={setValue}
                          id={1}/>
             <TodoList/>
-            {/*</Suspense>*/}
+            <Editor/>
         </div>
     )
 }
