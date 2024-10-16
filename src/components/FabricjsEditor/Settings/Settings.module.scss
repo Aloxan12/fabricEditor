@@ -1,0 +1,15 @@
+.setting{
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  height: calc(100% - 80px);
+  background-color: white;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  &:empty{
+    padding: 0;
+  }
+}
