@@ -1,0 +1,26 @@
+.wrapper{
+    width: 100%;
+    min-height: 80vh;
+    background-color: #efeeee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.menu-wrap{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.item{
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.active{
+    background-color: #94d294;
+    pointer-events: none;
+}
