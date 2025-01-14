@@ -5,7 +5,7 @@ interface SvgAttrEditorProps {
     svg: FunctionComponent<SVGProps<SVGSVGElement> & { title?: string }>;
 }
 
-export const SvgAttrEditor = ({svg: SvgCopm}:SvgAttrEditorProps) => {
+export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
     const [selectedElement, setSelectedElement] = useState<SVGElement | null>(null);
     const [attributes, setAttributes] = useState<Record<string, string>>({});
     const [xmlData, setXmlData] = useState<any>(null);
@@ -15,6 +15,9 @@ export const SvgAttrEditor = ({svg: SvgCopm}:SvgAttrEditorProps) => {
     const handleElementClick = (event: React.MouseEvent<SVGElement>) => {
         event.stopPropagation();
         const target = event.target as SVGElement & any;
+        if(target?.tagName === 'g'){
+            console.log('here')
+        }
         if(target.attributes['sbt:seat'] || target.attributes['sbt:cat'] || target.attributes['sbt:row']){
             setSelectedElement(target);
 
@@ -46,7 +49,6 @@ export const SvgAttrEditor = ({svg: SvgCopm}:SvgAttrEditorProps) => {
             setAttributes({ ...attributes, [name]: value });
         }
     };
-    console.log('SvgCopm', SvgCopm)
     return (
         <div style={{ width: '100%', display: "flex", gap: "20px" }}>
             <svg width="100%" height="100%" viewBox="0 0 500 500">
@@ -55,22 +57,6 @@ export const SvgAttrEditor = ({svg: SvgCopm}:SvgAttrEditorProps) => {
                         <div className='svg-main' dangerouslySetInnerHTML={{__html: new XMLSerializer().serializeToString(xmlData)}}/>}
                 </foreignObject>
             </svg>
-            {/*/!* SVG с обработчиком кликов *!/*/}
-            {/*<div  style={{ width: '70%' }}>*/}
-            {/*    <svg*/}
-            {/*        width="100%" // Устанавливаем ширину и высоту в процентах*/}
-            {/*        height="100%"*/}
-            {/*        viewBox="0 0 500 500" // Координаты для масштабирования*/}
-            {/*        preserveAspectRatio="xMidYMid meet" // Поддержка пропорций*/}
-            {/*        onClick={() => setSelectedElement(null)} // Сбрасываем выбор при клике вне элемента*/}
-            {/*    >*/}
-            {/*        <g*/}
-            {/*        >*/}
-            {/*            <foreignObject x="0" y="0" width="500" height="500" onClick={handleElementClick}>*/}
-            {/*                <SvgCopm  width="500" height="500"/>*/}
-            {/*            </foreignObject>*/}
-            {/*        </g>*/}
-            {/*    </svg>*/}
             {selectedElement && (
                 <div style={{ border: "1px solid #ccc", padding: "10px" }}>
                     <h3>Изменить атрибуты</h3>
