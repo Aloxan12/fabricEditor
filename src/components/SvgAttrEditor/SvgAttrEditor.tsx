@@ -8,15 +8,26 @@ interface SvgAttrEditorProps {
 export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
     const [selectedElement, setSelectedElement] = useState<SVGElement | null>(null);
     const [attributes, setAttributes] = useState<Record<string, string>>({});
-    const [xmlData, setXmlData] = useState<any>(null);
+    const [xmlData, setXmlData] = useState<Document | null>(null);
     console.log('xmlData', xmlData)
-
 
     const handleElementClick = (event: React.MouseEvent<SVGElement>) => {
         event.stopPropagation();
         const target = event.target as SVGElement & any;
-        if(target?.tagName === 'g'){
-            console.log('here')
+
+        console.log('target', target)
+        const parentElement = target.parentNode
+        if(parentElement){
+            console.log('parentElement', parentElement)
+            const deepParentElement = parentElement.parentElement;
+            console.log('deepParentElement', deepParentElement)
+            // console.log(
+            //     "Parent Attributes:",
+            //     Array.from(parentElement.attributes).map((attr: any) => ({
+            //         name: attr.name,
+            //         value: attr.value,
+            //     }))
+            // );
         }
         if(target.attributes['sbt:seat'] || target.attributes['sbt:cat'] || target.attributes['sbt:row']){
             setSelectedElement(target);
@@ -49,12 +60,16 @@ export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
             setAttributes({ ...attributes, [name]: value });
         }
     };
+
     return (
         <div style={{ width: '100%', display: "flex", gap: "20px" }}>
             <svg width="100%" height="100%" viewBox="0 0 500 500">
                 <foreignObject x="0" y="0" width="500" height="500" onClick={handleElementClick}>
                     {xmlData &&
-                        <div className='svg-main' dangerouslySetInnerHTML={{__html: new XMLSerializer().serializeToString(xmlData)}}/>}
+                        <div
+                            className="svg-main"
+                            dangerouslySetInnerHTML={{__html: new XMLSerializer().serializeToString(xmlData)}}
+                        />}
                 </foreignObject>
             </svg>
             {selectedElement && (

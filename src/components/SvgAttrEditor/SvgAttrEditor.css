@@ -2,9 +2,12 @@ circle{
     transition: fill 0.3s ease;
 }
 
-.svg-main {
-    svg{
-        width: 500px;
-        height: 500px;
-    }
+.svg-main svg{
+        width: 500px !important;
+        height: 500px !important;
+}
+
+g circle :hover {
+    stroke: black;
+    stroke-width: 2px
 }
