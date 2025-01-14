@@ -1,0 +1,10 @@
+circle{
+    transition: fill 0.3s ease;
+}
+
+.svg-main {
+    svg{
+        width: 500px;
+        height: 500px;
+    }
+}
