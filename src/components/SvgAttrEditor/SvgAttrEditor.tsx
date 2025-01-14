@@ -1,4 +1,4 @@
-import React, {FunctionComponent, SVGProps, useEffect, useRef, useState} from "react";
+import React, {FunctionComponent, SVGProps, useCallback, useEffect, useRef, useState} from "react";
 import './SvgAttrEditor.css'
 
 interface SvgAttrEditorProps {
@@ -6,6 +6,7 @@ interface SvgAttrEditorProps {
 }
 
 export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
+    const [selectedGroup, setSelectedGroup] = useState<SVGElement | null>(null);
     const [selectedElement, setSelectedElement] = useState<SVGElement | null>(null);
     const [attributes, setAttributes] = useState<Record<string, string>>({});
     const [xmlData, setXmlData] = useState<Document | null>(null);
@@ -27,11 +28,18 @@ export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
         }
     };
 
+    const handleGroupClick = useCallback((event: Event) => {
+        console.log("Группа была нажата", event.currentTarget);
+        if(selectedGroup){
+            selectedGroup.classList.remove('active')
+        }
+        const group = event.currentTarget as SVGElement;
+        group.classList.add('active');
+        setSelectedGroup(group)
+    }, [selectedGroup])
+
     useEffect(() => {
         const svgElement = svgContainerRef.current;
-        const handleGroupClick = (event: Event) => {
-            console.log("Группа была нажата", event.currentTarget);
-        };
         if (svgElement) {
             const groups = svgElement.querySelectorAll("g");
             console.log('groups', groups[99]?.attributes)
@@ -43,7 +51,6 @@ export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
             });
         }
 
-        // Очистка после рендеринга компонента
         return () => {
             if (svgElement) {
                 const groups = svgElement.querySelectorAll("g");
@@ -55,7 +62,7 @@ export const SvgAttrEditor = ({}:SvgAttrEditorProps) => {
                 });
             }
         };
-    }, [xmlData]);
+    }, [xmlData, handleGroupClick]);
 
     useEffect(() => {
         const fetchXml = async () => {
