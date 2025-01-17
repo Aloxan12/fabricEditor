@@ -1,0 +1,24 @@
+.svgAttrEditor{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.svgAttrEditor .tabs{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.svgAttrEditor .content{
+    display: flex;
+    gap: 20px;
+}
+.svgAttrEditor .content .choose-attr{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.activeTab{
+    border: 2px solid black;
+}

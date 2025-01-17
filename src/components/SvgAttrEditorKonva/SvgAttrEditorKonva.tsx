@@ -45,7 +45,7 @@ export const SvgAttrEditorKonva = memo(({places, onSeatClick, image, selectedPla
     useHandleWheelEffect(stageRef, imageRef, image)
     useInitKonvaEffect(image, stageRef, imageRef);
 
-    const onSeatClickHandler = useCallback((value:SeatData )=>()=>onSeatClick?.(value), [])
+    const onSeatClickHandler = useCallback((value:SeatData )=>()=>onSeatClick?.(value),[onSeatClick])
     const placesRender: ReactNode = useMemo(() => places.map((place) => (
         <Circle
             key={place.seatId}
