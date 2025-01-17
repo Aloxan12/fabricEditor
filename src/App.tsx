@@ -6,15 +6,15 @@ import {AppCheckbox} from 'todoList/components'
 import TodoList from 'todoList/TodoList'
 import {Editor} from "./components/Editor/Editor";
 import {FabricJsEditor} from "./components/FabricjsEditor/FabricjsEditor";
-import {SvgAttrEditor} from "./components/SvgAttrEditor/SvgAttrEditor.tsx";
-import {ReactComponent as Svg} from './it.svg';
+import {SvgAttrEditorKonvaWrap} from "./components/SvgAttrEditorKonva/SvgAttrEditorKonvaWrap.tsx";
 
 function App() {
     const [value, setValue] = useState(false)
     return (
         <div className='wrap'>
             <div>main</div>
-            <SvgAttrEditor svg={Svg}/>
+            <SvgAttrEditorKonvaWrap />
+            {/*<SvgAttrEditor svg={Svg}/>*/}
             <FabricJsEditor/>
             <AppCheckbox text={'check'}
                          value={value}
