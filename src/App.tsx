@@ -7,14 +7,12 @@ import TodoList from 'todoList/TodoList'
 import {Editor} from "./components/Editor/Editor";
 import {FabricJsEditor} from "./components/FabricjsEditor/FabricjsEditor";
 import {SvgAttrEditorKonvaWrap} from "./components/SvgAttrEditorKonva/SvgAttrEditorKonvaWrap.tsx";
-import {CanvasSvgEditor} from "./components/CanvasSvgEditor/CanvasSvgEditor.tsx";
 
 function App() {
     const [value, setValue] = useState(false)
     return (
         <div className='wrap'>
             <div>main</div>
-            <CanvasSvgEditor />
             <SvgAttrEditorKonvaWrap />
             {/*<SvgAttrEditor svg={Svg}/>*/}
             <FabricJsEditor/>
