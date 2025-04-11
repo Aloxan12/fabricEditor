@@ -6,7 +6,7 @@ export const useGetPlaces = () => {
 
     useEffect(() => {
         const fetchPlaces = async () => {
-            const response = await fetch('/data.json');
+            const response = await fetch('/responsePlan.json');
             const dataRp: AllData = await response.json();
 
             console.log('dataRp', dataRp)

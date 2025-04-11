@@ -6,7 +6,8 @@ export const useGetImage = () => {
     useEffect(() => {
         const loadImage = () => {
             const img = new Image();
-            img.src = "/ex1.svg"; // Путь к подложке
+            img.src = "/август.svg"; // Путь к подложке
+            // img.src = "/Лужники.svg"; // Путь к подложке
             img.onload = () => setImage(img);
         };
         loadImage();
