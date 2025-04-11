@@ -11,7 +11,7 @@ import {FixedSizeList as List} from 'react-window';
 
 type Tab = 'seat' | 'row' | 'sect'
 
-export interface PlacesIds{
+export interface PlacesIds {
     [key: number | string]: SeatData
 }
 
@@ -19,6 +19,7 @@ export const SvgAttrEditorKonvaWrap = () => {
     const places: SeatData[] = useGetPlaces()
     const { image }  = useGetImage()
     const [selectedPlaces, setSelectedPlaces] = useState<PlacesIds>({})
+    const [hoveredPlaces, setHoveredPlaces] = useState<PlacesIds>({});
     const [activeTab, setActiveTab] = useState<Tab>('seat')
 
     const changeActiveTab = (value:Tab )=>()=> setActiveTab(value)
@@ -53,6 +54,33 @@ export const SvgAttrEditorKonvaWrap = () => {
         },
         [activeTab, places]
     );
+
+    const onSeatHoverHandler = useCallback(
+        (value: SeatData) => {
+            switch (activeTab) {
+                case 'seat': {
+                    return setHoveredPlaces({ [value.seatId]: value });
+                }
+                case 'row': {
+                    const currentRow = getRow(value, places);
+                    return setHoveredPlaces(updatePlaces({}, currentRow));
+                }
+                case 'sect': {
+                    const currentSect = getSector(value, places);
+                    return setHoveredPlaces(updatePlaces({}, currentSect));
+                }
+                default:
+                    return setHoveredPlaces({});
+            }
+        },
+        [activeTab, places]
+    );
+
+    const onSeatLeaveHandler = useCallback(() => {
+        setHoveredPlaces({});
+    }, []);
+
+
     return (
        <div className='svgAttrEditor'>
            <div className='tabs'>
@@ -61,7 +89,15 @@ export const SvgAttrEditorKonvaWrap = () => {
                <button className={activeTab === 'sect' ? 'activeTab' : ''} onClick={changeActiveTab('sect')}>sector</button>
            </div>
            <div className='content'>
-               <SvgAttrEditorKonva selectedPlaces={selectedPlaces} places={places} image={image} onSeatClick={onSeatClickHandler} />
+               <SvgAttrEditorKonva
+                   selectedPlaces={selectedPlaces}
+                   hoveredPlaces={hoveredPlaces}
+                   onSeatHover={onSeatHoverHandler}
+                   places={places}
+                   image={image}
+                   onSeatClick={onSeatClickHandler}
+                   onSeatLeave={onSeatLeaveHandler}
+               />
                <div className='choose-attr'>
                    <div>Выбранны:</div>
                    <List height={500}

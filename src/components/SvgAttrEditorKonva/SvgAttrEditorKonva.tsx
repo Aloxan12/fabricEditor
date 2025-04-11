@@ -1,5 +1,5 @@
 import {memo, ReactNode, useCallback, useMemo, useRef} from "react";
-import {Circle, Image as ImageKonva, Layer, Stage} from "react-konva";
+import {Circle, FastLayer, Image as ImageKonva, Layer, Stage} from "react-konva";
 import konva from "konva";
 import {useLimitDrag} from "./hooks/useLimitDrag.ts";
 import {useHandleWheelEffect} from "./hooks/useHandleWheelEffect.ts";
@@ -33,11 +33,14 @@ const categoryColors:{[key: string]: string} = {
 interface SvgAttrEditorKonvaProps{
     places: SeatData[]
     onSeatClick?: (value: SeatData)=> void
+    onSeatHover?: (value: SeatData)=> void
+    onSeatLeave?: ()=> void
     image: HTMLImageElement | null
     selectedPlaces: PlacesIds
+    hoveredPlaces: PlacesIds;
 }
 
-export const SvgAttrEditorKonva = memo(({places, onSeatClick, image, selectedPlaces}:SvgAttrEditorKonvaProps) => {
+export const SvgAttrEditorKonva = memo(({places, onSeatClick, image,onSeatLeave, selectedPlaces, hoveredPlaces, onSeatHover}:SvgAttrEditorKonvaProps) => {
     const stageRef = useRef<konva.Stage | null>(null);
     const imageRef = useRef<konva.Image>(null);
     const { limitDrag } = useLimitDrag(stageRef, imageRef)
@@ -46,21 +49,24 @@ export const SvgAttrEditorKonva = memo(({places, onSeatClick, image, selectedPla
     useInitKonvaEffect(image, stageRef, imageRef);
 
     const onSeatClickHandler = useCallback((value:SeatData )=>()=>onSeatClick?.(value),[onSeatClick])
+    const onMouseEnterHandler = useCallback((value: SeatData) => () => onSeatHover?.(value), [onSeatHover]);
+    const onMouseLeaveHandler = useCallback(() => onSeatLeave?.(), [onSeatLeave]);
     const placesRender: ReactNode = useMemo(() => places.map((place) => (
         <Circle
             key={place.seatId}
             x={place.coodrinates.x}
             y={place.coodrinates.y}
-            radius={3}
+            radius={hoveredPlaces[place.seatId] ? 5 : 3}
             fill={selectedPlaces[place.seatId] ? 'blue' : (categoryColors[`${place.categoryId}`]) || 'black'}
             onClick={onSeatClickHandler(place)}
+            onMouseEnter={onMouseEnterHandler(place)}
+            onMouseLeave={onMouseLeaveHandler}
         />
-    )), [onSeatClickHandler, selectedPlaces, places])
+    )), [places, hoveredPlaces, selectedPlaces, onSeatClickHandler, onMouseEnterHandler, onMouseLeaveHandler])
 
     return (
         <Stage width={800} height={400} draggable ref={stageRef} onDragMove={limitDrag}>
-            <Layer width={image?.width || 800} height={image?.height || 400}>
-                {/* Подложка */}
+            <FastLayer>
                 {image && <ImageKonva
                     x={0}
                     y={0}
@@ -69,6 +75,10 @@ export const SvgAttrEditorKonva = memo(({places, onSeatClick, image, selectedPla
                     width={image.width}
                     height={image.height}
                 />}
+            </FastLayer>
+            <Layer width={image?.width || 800} height={image?.height || 400}>
+                {/* Подложка */}
+
                 {/* Места */}
                 {placesRender}
             </Layer>
