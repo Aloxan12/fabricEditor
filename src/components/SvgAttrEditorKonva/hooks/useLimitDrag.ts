@@ -1,31 +1,46 @@
-import {useCallback} from "react";
+import React, {useCallback} from "react";
+import konva from "konva";
 
-export const useLimitDrag = (stageRef: any, imageRef: any )=>{
+export const useLimitDrag = (
+    stageRef: React.MutableRefObject<konva.Stage | null>,
+    imageRef: React.RefObject<konva.Image>
+) => {
     const limitDrag = useCallback(() => {
+        if (!stageRef.current || !imageRef.current) return;
+
         const stage = stageRef.current;
-        const imageWidth = imageRef.current.width();
-        const imageHeight = imageRef.current.height();
+        const image = imageRef.current;
+
+        // Получаем размеры сцены и изображения
         const stageWidth = stage.width();
         const stageHeight = stage.height();
+        const imageWidth = image.width() * stage.scaleX();
+        const imageHeight = image.height() * stage.scaleY();
 
+        // Получаем текущую позицию
         let x = stage.x();
         let y = stage.y();
 
-        // Ограничиваем перетаскивание по оси X
-        const maxX = stageWidth - imageWidth * stage.scaleX(); // Предел для оси X
-        const minX = 0; // Предел для оси X
-        if (x > minX) x = minX;
-        if (x < maxX) x = maxX;
+        // Для небольших изображений центрируем их
+        if (imageWidth < stageWidth) {
+            x = (stageWidth - imageWidth) / 2;
+        } else {
+            // Ограничиваем горизонтальное перемещение
+            const minX = stageWidth - imageWidth;
+            x = Math.max(minX, Math.min(0, x));
+        }
 
-        // Ограничиваем перетаскивание по оси Y
-        const maxY = stageHeight - imageHeight * stage.scaleY(); // Предел для оси Y
-        const minY = 0; // Предел для оси Y
-        if (y > minY) y = minY;
-        if (y < maxY) y = maxY;
+        if (imageHeight < stageHeight) {
+            y = (stageHeight - imageHeight) / 2;
+        } else {
+            // Ограничиваем вертикальное перемещение
+            const minY = stageHeight - imageHeight;
+            y = Math.max(minY, Math.min(0, y));
+        }
 
+        // Применяем новую позицию
         stage.position({ x, y });
-        stage.batchDraw();
-    }, []);
+    }, [imageRef, stageRef]);
 
-    return { limitDrag }
-}
+    return { limitDrag };
+};

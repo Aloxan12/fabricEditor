@@ -1,4 +1,3 @@
-import {SvgAttrEditorKonva} from "./SvgAttrEditorKonva.tsx";
 import {useGetPlaces} from "./hooks/useGetPlaces.ts";
 import {SeatData} from "./Dto.ts";
 import {useGetImage} from "./hooks/useGetImage.ts";
@@ -8,6 +7,7 @@ import {getRow} from "./helpers/getRow.ts";
 import {updatePlaces} from "./helpers/updatePlaces.ts";
 import {getSector} from "./helpers/getSector.ts";
 import {FixedSizeList as List} from 'react-window';
+import {SvgAttrEditorKonva} from "./SvgAttrEditorKonva.tsx";
 
 type Tab = 'seat' | 'row' | 'sect'
 
@@ -63,6 +63,7 @@ export const SvgAttrEditorKonvaWrap = () => {
                 }
                 case 'row': {
                     const currentRow = getRow(value, places);
+                    console.log('currentRow', currentRow)
                     return setHoveredPlaces(updatePlaces({}, currentRow));
                 }
                 case 'sect': {
@@ -97,6 +98,7 @@ export const SvgAttrEditorKonvaWrap = () => {
                    image={image}
                    onSeatClick={onSeatClickHandler}
                    onSeatLeave={onSeatLeaveHandler}
+                   activeTab={activeTab}
                />
                <div className='choose-attr'>
                    <div>Выбранны:</div>
