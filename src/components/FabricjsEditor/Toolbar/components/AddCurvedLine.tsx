@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import {Canvas, Path} from 'fabric';
-import {IconButton} from 'blocksin-system'
 
 interface AddCurvedLineProps {
     canvas: Canvas | null;
@@ -81,8 +80,8 @@ export const AddCurvedLine = ({ canvas }: AddCurvedLineProps) => {
     };
 
     return (
-        <IconButton onClick={toggleLineMode} size="big" variant="ghost">
+        <button onClick={toggleLineMode}>
             {isDrawing ? 'Stop Curve Drawing' : 'Draw Curve'}
-        </IconButton>
+        </button>
     );
 };

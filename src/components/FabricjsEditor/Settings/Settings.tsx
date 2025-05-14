@@ -1,14 +1,13 @@
 import {useEffect, useState} from "react";
 import {Canvas} from "fabric";
 import cls from './Settings.module.scss'
-import {Input} from 'blocksin-system'
 
 interface SettingsProps{
     canvas: Canvas | null
 }
 
 export const Settings = ({canvas}:SettingsProps) => {
-    const [selectedObject, setSelectedObject] = useState(null)
+    const [selectedObject, setSelectedObject] = useState<any>(null)
     const [width, setWidth] = useState<string | number>('')
     const [height, setHeight] = useState<string | number>('')
     const [diameter, setDiameter] = useState<string | number>('')
@@ -102,15 +101,15 @@ export const Settings = ({canvas}:SettingsProps) => {
         <div className={cls.setting}>
             {selectedObject && selectedObject.type === 'rect' && (
                 <>
-                    <Input fluid label='Width' value={width} onChange={handleWidthChange} />
-                    <Input fluid label='Height' value={height} onChange={handleHeightChange} />
-                    <Input fluid label='Color' type='color' value={color} onChange={handleColorChange} />
+                    <input value={width} onChange={handleWidthChange} />
+                    <input value={height} onChange={handleHeightChange} />
+                    <input type='color' value={color} onChange={handleColorChange} />
                 </>
             )}
             {selectedObject && selectedObject.type === 'circle' && (
                 <>
-                    <Input fluid label='Diameter' value={diameter} onChange={handleDiameterChange} />
-                    <Input fluid label='Color' type='color' value={color} onChange={handleColorChange} />
+                    <input value={diameter} onChange={handleDiameterChange} />
+                    <input type='color' value={color} onChange={handleColorChange} />
                 </>
             )}
         </div>

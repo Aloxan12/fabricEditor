@@ -1,4 +1,3 @@
-import {IconButton} from 'blocksin-system'
 import {Canvas, PencilBrush} from "fabric";
 
 interface OnPanModeProps{
@@ -19,7 +18,7 @@ export const OnPanMode = ({canvas}:OnPanModeProps)=>{
             });
         }
     };
-    return <IconButton onClick={startDrawing} size='medium' variant='ghost'>
+    return <button onClick={startDrawing}>
        pen
-    </IconButton>
+    </button>
 }

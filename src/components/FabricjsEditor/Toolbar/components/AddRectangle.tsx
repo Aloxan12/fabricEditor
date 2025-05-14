@@ -1,5 +1,3 @@
-import {SquareIcon} from 'sebikostudio-icons'
-import {IconButton} from 'blocksin-system'
 import {Canvas, Rect} from "fabric";
 
 interface AddRectangleProps{
@@ -23,8 +21,8 @@ export const AddRectangle = ({canvas}:AddRectangleProps) => {
     }
 
     return (
-        <IconButton onClick={addRectangle} size='big' variant='ghost'>
-            <SquareIcon />
-        </IconButton>
+        <button onClick={addRectangle}>
+            ico
+        </button>
     );
 }

@@ -1,5 +1,5 @@
 import {Canvas, Line} from "fabric";
-import {IconButton} from 'blocksin-system'
+// import {IconButton} from 'blocksin-system'
 import {useEffect, useState} from "react";
 
 interface AddLineProps{
@@ -74,8 +74,8 @@ export const AddLine = ({canvas}:AddLineProps) => {
 
 
     return (
-        <IconButton onClick={toggleLineMode} size="big" variant="ghost">
+        <button onClick={toggleLineMode}>
             {isDrawing ? 'Stop Line' : 'Draw Line'}
-        </IconButton>
+        </button>
     );
 }

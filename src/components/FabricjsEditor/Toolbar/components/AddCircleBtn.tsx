@@ -1,5 +1,3 @@
-import {CircleIcon} from 'sebikostudio-icons'
-import {IconButton} from 'blocksin-system'
 import {Canvas, Circle} from "fabric";
 
 interface AddCircleBtnProps{
@@ -20,7 +18,7 @@ export const AddCircleBtn = ({canvas}:AddCircleBtnProps)=>{
         }
     }
 
-    return <IconButton onClick={addCircle} size='big' variant='ghost'>
-        <CircleIcon  />
-    </IconButton>
+    return <button onClick={addCircle}>
+        круг
+    </button>
 }
