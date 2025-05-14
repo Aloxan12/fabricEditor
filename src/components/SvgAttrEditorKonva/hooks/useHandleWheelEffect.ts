@@ -1,125 +1,128 @@
 import React, {useCallback, useEffect, useRef} from "react";
-import konva from "konva";
+import Konva from "konva";
 
-const MIN_SCALE = 0.1;  // Минимальный масштаб (10%)
-const MAX_SCALE = 10;   // Максимальный масштаб (1000%)
-const SCALE_BY = 1.1;   // Коэффициент масштабирования при каждом шаге зума
+const MIN_SCALE = 0.1;
+const MAX_SCALE = 10;
+const SCALE_BY = 1.1;
 
 export const useHandleWheelEffect = (
-    stageRef: React.MutableRefObject<konva.Stage | null>,
-    imageRef: React.RefObject<konva.Image>,
+    stageRef: React.MutableRefObject<Konva.Stage | null>,
+    imageRef: React.RefObject<Konva.Image>,
     image: HTMLImageElement | null
 ) => {
-    // Сохраняем текущий масштаб
     const currentScaleRef = useRef<number>(1);
-    // Отслеживаем, находится ли колесо в движении (для предотвращения множественных событий)
     const wheelingRef = useRef<boolean>(false);
-    // Таймер для debounce колеса
     const wheelTimer = useRef<number | null>(null);
 
-    // Функция для плавного зумирования в указанную точку
-    const zoomTo = useCallback((scale: number, pointer: {x: number, y: number}) => {
+    useEffect(() => {
         const stage = stageRef.current;
         if (!stage || !imageRef.current || !image) return;
 
-        const oldScale = currentScaleRef.current;
+        const stageWidth = stage.width();
+        const stageHeight = stage.height();
+        const imageWidth = image.width;
+        const imageHeight = image.height;
 
-        // Позиция указателя относительно сцены в исходных координатах
-        const mousePointTo = {
-            x: (pointer.x - stage.x()) / oldScale,
-            y: (pointer.y - stage.y()) / oldScale,
-        };
+        const initialScale = Math.min(stageWidth / imageWidth, stageHeight / imageHeight);
+        currentScaleRef.current = initialScale;
 
-        // Ограничиваем масштаб
-        const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+        const x = (stageWidth - imageWidth * initialScale) / 2;
+        const y = (stageHeight - imageHeight * initialScale) / 2;
 
-        // Сохраняем новый масштаб
-        currentScaleRef.current = newScale;
-
-        // Вычисляем новую позицию с учетом указателя
-        const newPos = {
-            x: pointer.x - mousePointTo.x * newScale,
-            y: pointer.y - mousePointTo.y * newScale,
-        };
-
-        // Применяем одновременно масштаб и позицию для плавности
-        const width = stage.width();
-        const height = stage.height();
-        const scaledImgWidth = image.width * newScale;
-        const scaledImgHeight = image.height * newScale;
-
-        // Корректируем позицию, чтобы не выходить за границы
-        let finalX = newPos.x;
-        let finalY = newPos.y;
-
-        // Для маленьких изображений - центрируем
-        if (scaledImgWidth < width) {
-            finalX = (width - scaledImgWidth) / 2;
-        } else {
-            // Иначе ограничиваем перемещение
-            finalX = Math.min(0, Math.max(width - scaledImgWidth, finalX));
-        }
-
-        if (scaledImgHeight < height) {
-            finalY = (height - scaledImgHeight) / 2;
-        } else {
-            finalY = Math.min(0, Math.max(height - scaledImgHeight, finalY));
-        }
-
-        // Применяем анимированное изменение для плавности
-        stage.to({
-            scaleX: newScale,
-            scaleY: newScale,
-            x: finalX,
-            y: finalY,
-            duration: 0.1, // Короткая анимация для плавности
-            easing: konva.Easings.EaseOut
-        });
+        stage.scale({ x: initialScale, y: initialScale });
+        stage.position({ x, y });
+        stage.batchDraw();
     }, [image]);
 
-    const handleWheel = useCallback((e: WheelEvent) => {
-        e.preventDefault();
+    const zoomTo = useCallback(
+        (scale: number, pointer: { x: number; y: number }) => {
+            const stage = stageRef.current;
+            if (!stage || !imageRef.current || !image) return;
 
-        const stage = stageRef.current;
-        if (!stage || !imageRef.current || !image) return;
+            const oldScale = currentScaleRef.current;
+            const mousePointTo = {
+                x: (pointer.x - stage.x()) / oldScale,
+                y: (pointer.y - stage.y()) / oldScale,
+            };
 
-        if (wheelingRef.current) return; // Пропускаем события, если уже обрабатываем колесо
-        wheelingRef.current = true;
+            const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+            currentScaleRef.current = newScale;
 
-        // Очищаем предыдущий таймер
-        if (wheelTimer.current !== null) {
-            window.clearTimeout(wheelTimer.current);
-        }
+            const newPos = {
+                x: pointer.x - mousePointTo.x * newScale,
+                y: pointer.y - mousePointTo.y * newScale,
+            };
 
-        // Получаем текущий масштаб
-        const oldScale = currentScaleRef.current;
+            const stageWidth = stage.width();
+            const stageHeight = stage.height();
+            const scaledImgWidth = image.width * newScale;
+            const scaledImgHeight = image.height * newScale;
 
-        // Позиция указателя
-        const pointer = stage.getPointerPosition();
-        if (!pointer) {
-            wheelingRef.current = false;
-            return;
-        }
+            let finalX = newPos.x;
+            let finalY = newPos.y;
 
-        // Определяем направление и рассчитываем новый масштаб
-        const direction = e.deltaY > 0 ? -1 : 1;
-        const  newScale = direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
+            if (scaledImgWidth <= stageWidth) {
+                finalX = (stageWidth - scaledImgWidth) / 2;
+            } else {
+                const minX = stageWidth - scaledImgWidth;
+                const maxX = 0;
+                finalX = Math.min(maxX, Math.max(minX, finalX));
+            }
 
-        // Зумируем к точке указателя
-        zoomTo(newScale, pointer);
+            if (scaledImgHeight <= stageHeight) {
+                finalY = (stageHeight - scaledImgHeight) / 2;
+            } else {
+                const minY = stageHeight - scaledImgHeight;
+                const maxY = 0;
+                finalY = Math.min(maxY, Math.max(minY, finalY));
+            }
 
-        // Устанавливаем timeout для разблокировки обработчика колеса
-        wheelTimer.current = window.setTimeout(() => {
-            wheelingRef.current = false;
-        }, 50); // Задержка для предотвращения слишком частого зума
+            stage.to({
+                scaleX: newScale,
+                scaleY: newScale,
+                x: finalX,
+                y: finalY,
+                duration: 0.3,
+                easing: Konva.Easings.EaseOut,
+            });
+        },
+        [image]
+    );
 
-    }, [zoomTo, image]);
+    const handleWheel = useCallback(
+        (e: WheelEvent) => {
+            e.preventDefault();
 
-    // Применяем обработчик колесика мыши
+            const stage = stageRef.current;
+            if (!stage || !imageRef.current || !image) return;
+            if (wheelingRef.current) return;
+
+            const pointer = stage.getPointerPosition();
+            if (!pointer || (pointer.x === 0 && pointer.y === 0)) return;
+
+            wheelingRef.current = true;
+
+            if (wheelTimer.current !== null) {
+                window.clearTimeout(wheelTimer.current);
+            }
+
+            const oldScale = currentScaleRef.current;
+            const direction = e.deltaY > 0 ? -1 : 1;
+            const newScale = direction > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
+
+            zoomTo(newScale, pointer);
+
+            wheelTimer.current = window.setTimeout(() => {
+                wheelingRef.current = false;
+            }, 50);
+        },
+        [zoomTo, image]
+    );
+
     useEffect(() => {
-        if (!stageRef.current) return;
-
         const stage = stageRef.current;
+        if (!stage || !image) return;
+
         stage.content.addEventListener("wheel", handleWheel, { passive: false });
 
         return () => {
@@ -128,8 +131,7 @@ export const useHandleWheelEffect = (
                 window.clearTimeout(wheelTimer.current);
             }
         };
-    }, [handleWheel, stageRef]);
+    }, [handleWheel, image]);
 
-    // Экспортируем функцию zoomTo для использования извне
     return { currentScale: currentScaleRef.current, zoomTo };
 };
