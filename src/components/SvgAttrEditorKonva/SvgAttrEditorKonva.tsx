@@ -470,7 +470,6 @@ export const SvgAttrEditorKonva = memo(({
                     listening={false}
                 />
             </Stage>
-            {/* Опциональный индикатор FPS для отладки производительности */}
             <div style={{ position: 'absolute', bottom: 10, right: 10, background: 'rgba(0,0,0,0.5)', color: 'white', padding: '5px 10px' }}>
                 FPS: {fps} | Видимых мест: {visibleSeatsLayerRef.current.length} из {places.length}
             </div>
